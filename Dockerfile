@@ -12,7 +12,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Uninstall pyrogram
-RUN pip uninstall pyrogram -y
 
 CMD ["python", "bot.py"]
