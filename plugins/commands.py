@@ -21,7 +21,7 @@ async def start(c, m, cb=False):
     if not cb:
         send_msg = await m.reply_text("**Processing...**", quote=True)
 
-    owner = await c.get_users(int(OWNER_ID))
+    owner = await c.get_users(OWNER_ID)
 
     # start text
     text = f"""Hey! {m.from_user.mention(style='md')}
@@ -61,7 +61,7 @@ async def start(c, m, cb=False):
             )
 
             if string.empty:
-                owner = await c.get_users(int(OWNER_ID))
+                owner = await c.get_users(OWNER_ID)
                 return await m.reply_text(
                     f"🥴 Sorry bro your file was deleted by file owner or bot owner\n\nFor more help contact my owner 👉 {owner.mention(style='md')}"
                 )
@@ -74,7 +74,7 @@ async def start(c, m, cb=False):
                 )
 
                 if msg.empty:
-                    owner = await c.get_users(int(OWNER_ID))
+                    owner = await c.get_users(OWNER_ID)
                     return await m.reply_text(
                         f"🥴 Sorry bro your file was deleted by file owner or bot owner\n\nFor more help contact my owner 👉 {owner.mention(style='md')}"
                     )

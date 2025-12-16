@@ -9,7 +9,7 @@ from plugins.commands import decode
 
 @Client.on_message(filters.private & filters.incoming)
 async def forcesub(c, m):
-    owner = await c.get_users(int(OWNER_ID))
+    owner = await c.get_users(OWNER_ID)
     if UPDATE_CHANNEL:
         try:
             user = await c.get_chat_member(UPDATE_CHANNEL, m.from_user.id)
@@ -55,7 +55,7 @@ async def forcesub(c, m):
 
 @Client.on_callback_query(filters.regex("^refresh"))
 async def refresh_cb(c, m):
-    owner = await c.get_users(int(OWNER_ID))
+    owner = await c.get_users(OWNER_ID)
     if UPDATE_CHANNEL:
         try:
             user = await c.get_chat_member(UPDATE_CHANNEL, m.from_user.id)
