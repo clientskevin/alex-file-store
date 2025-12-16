@@ -1,8 +1,7 @@
 
+import asyncio
 import logging
 import logging.config
-import threading
-import time
 
 from pyrogram.client import Client
 from pyromod import listen  # type: ignore
@@ -13,34 +12,46 @@ from config import API_HASH, API_ID, BOT_TOKEN
 logging.getLogger().setLevel(logging.ERROR)
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
-def start_webapp():
-    """Start the FastAPI webapp in a separate thread"""
+
+async def start_webapp():
+    """Start the FastAPI webapp using uvicorn in the same event loop"""
     import uvicorn
 
     from webapp import app
-
-    # Run uvicorn server
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
-
-def main():
-    # Start webapp in background thread
-    webapp_thread = threading.Thread(target=start_webapp, daemon=True)
-    webapp_thread.start()
     
+    config = uvicorn.Config(app, host="0.0.0.0", port=8000, log_level="info")
+    server = uvicorn.Server(config)
+    await server.serve()
 
-    time.sleep(3)
 
-
+async def start_bot():
+    """Start the Pyrogram bot"""
     plugins = dict(root="plugins")
-    app = Client("FileStore",
-                 bot_token=BOT_TOKEN,
-                 api_id=API_ID,
-                 api_hash=API_HASH,
-                 plugins=plugins,
-                 workers=100)
+    app = Client(
+        "FileStore",
+        bot_token=BOT_TOKEN,
+        api_id=API_ID,
+        api_hash=API_HASH,
+        plugins=plugins,
+        workers=100
+    )
+    
+    await app.start()
+    print("✅ Bot started successfully!")
+    await asyncio.Event().wait()  # Keep running forever
 
-    app.run()
+
+async def main():
+    """Run both webapp and bot concurrently in the same event loop"""
+    print("🚀 Starting FastAPI webapp and Pyrogram bot...")
+    
+    # Run both tasks concurrently
+    await asyncio.gather(
+        start_webapp(),
+        start_bot(),
+        return_exceptions=True
+    )
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
