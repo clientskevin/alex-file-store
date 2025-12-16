@@ -57,7 +57,7 @@ async def start(c, m, cb=False):
             string = (
                 await c.get_messages(int(chat_id), int(message))
                 if not DB_CHANNEL_ID
-                else await c.get_messages(int(DB_CHANNEL_ID), int(message))
+                else await c.get_messages(, int(message))
             )
 
             if string.empty:
@@ -70,7 +70,7 @@ async def start(c, m, cb=False):
                 msg = (
                     await c.get_messages(int(chat_id), int(msg_id))
                     if not DB_CHANNEL_ID
-                    else await c.get_messages(int(DB_CHANNEL_ID), int(msg_id))
+                    else await c.get_messages(DB_CHANNEL_ID, int(msg_id))
                 )
 
                 if msg.empty:
@@ -92,7 +92,7 @@ async def start(c, m, cb=False):
         msg = (
             await c.get_messages(int(chat_id), int(msg_id))
             if not DB_CHANNEL_ID
-            else await c.get_messages(int(DB_CHANNEL_ID), int(msg_id))
+            else await c.get_messages(DB_CHANNEL_ID, int(msg_id))
         )
 
         if msg.empty:
@@ -206,7 +206,7 @@ async def batch(c, m):
     string = ""
     for file in files:
         if DB_CHANNEL_ID:
-            copy_message = await file.copy(int(DB_CHANNEL_ID))
+            copy_message = await file.copy(DB_CHANNEL_ID)
         else:
             copy_message = await file.copy(m.from_user.id)
         string += f"{copy_message.id}-"
@@ -216,7 +216,7 @@ async def batch(c, m):
     send = (
         await c.send_message(m.from_user.id, string_base64)
         if not DB_CHANNEL_ID
-        else await c.send_message(int(DB_CHANNEL_ID), string_base64)
+        else await c.send_message(DB_CHANNEL_ID, string_base64)
     )
     base64_string = await encode_string(f"batch_{m.chat.id}_{send.id}")
     bot = await c.get_me()

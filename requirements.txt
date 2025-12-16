@@ -1,4 +1,7 @@
-kurigram
+kurigram==2.2.15
 Pyromod
 TgCrypto
 pymongo==4.15.5
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+httpx==0.28.1

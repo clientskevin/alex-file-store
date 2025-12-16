@@ -1,16 +1,36 @@
 
 import logging
 import logging.config
+import threading
+import time
 
-from pyromod import listen # type: ignore
 from pyrogram.client import Client
-from config import BOT_TOKEN, API_ID, API_HASH
+from pyromod import listen  # type: ignore
+
+from config import API_HASH, API_ID, BOT_TOKEN
 
 # Get logging configurations
 logging.getLogger().setLevel(logging.ERROR)
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
+def start_webapp():
+    """Start the FastAPI webapp in a separate thread"""
+    import uvicorn
+
+    from webapp import app
+
+    # Run uvicorn server
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+
 def main():
+    # Start webapp in background thread
+    webapp_thread = threading.Thread(target=start_webapp, daemon=True)
+    webapp_thread.start()
+    
+
+    time.sleep(3)
+
+
     plugins = dict(root="plugins")
     app = Client("FileStore",
                  bot_token=BOT_TOKEN,

@@ -1,15 +1,17 @@
-import os
 import logging
 import logging.config
+import os
 
 # Get logging configurations
 logging.getLogger().setLevel(logging.ERROR)
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
-from .commands import start, BATCH
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
 from config import *
+
+from .commands import BATCH, start
 
 
 @Client.on_callback_query(filters.regex("^help$"))
@@ -67,7 +69,7 @@ async def done_cb(c, m):
 async def delete_cb(c, m):
     await m.answer()
     cmd, msg_id = m.data.split("+")
-    chat_id = m.from_user.id if not DB_CHANNEL_ID else int(DB_CHANNEL_ID)
+    chat_id = m.from_user.id if not DB_CHANNEL_ID else DB_CHANNEL_ID
     message = await c.get_messages(chat_id, int(msg_id))
     await message.delete()
     await m.message.edit("Deleted files successfully 👨‍✈️")

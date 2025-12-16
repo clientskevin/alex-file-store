@@ -1,9 +1,11 @@
 import os
+
 from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors import UserNotParticipant
-from database.database import *
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
 from config import *
+from database.database import *
 from plugins.commands import decode
 
 
@@ -82,7 +84,7 @@ async def refresh_cb(c, m):
     msg = (
         await c.get_messages(int(chat_id), int(msg_id))
         if not DB_CHANNEL_ID
-        else await c.get_messages(int(DB_CHANNEL_ID), int(msg_id))
+        else await c.get_messages(DB_CHANNEL_ID, int(msg_id))
     )
     if msg.empty:
         return await m.reply_text(
