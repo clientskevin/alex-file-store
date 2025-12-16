@@ -57,7 +57,7 @@ async def start(c, m, cb=False):
             string = (
                 await c.get_messages(int(chat_id), int(message))
                 if not DB_CHANNEL_ID
-                else await c.get_messages(, int(message))
+                else await c.get_messages(DB_CHANNEL_ID, int(message))
             )
 
             if string.empty:
