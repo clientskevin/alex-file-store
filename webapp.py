@@ -1,25 +1,19 @@
 import asyncio
 import logging
-import httpx
-from fastapi import FastAPI
 
+import httpx
+from flask import Flask, jsonify
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Simple WebApp")
+app = Flask(__name__)
 
-# Store ping history
-ping_history = []
-
-
-@app.get("/")
-async def home():
+@app.route("/")
+def home():
     """Simple homepage with ping history"""
-
-    return {"status": "ok"}
-
+    return jsonify({"status": "ok"})
 
 
 async def ping_self():
@@ -32,19 +26,21 @@ async def ping_self():
     async with httpx.AsyncClient() as client:
         while True:
             try:
-                await client.get(f"{base_url}/ping", timeout=10.0)
+                await client.get(f"{base_url}/", timeout=10.0)
             except Exception as e:
                 logger.error(f"❌ Ping failed: {e}")
             await asyncio.sleep(180)
 
+async def start_webapp():
+    """Start Flask app in a separate thread and ping task in asyncio"""
+    import threading
 
-@app.on_event("startup")
-async def startup_event():
-    """Start background tasks on application startup"""
+    # Start Flask in a daemon thread so it doesn't block asyncio
+    flask_thread = threading.Thread(
+        target=lambda: app.run(host="0.0.0.0", port=8000, debug=False, use_reloader=False),
+        daemon=True
+    )
+    flask_thread.start()
+    
+    # Start the ping task in asyncio (non-blocking)
     asyncio.create_task(ping_self())
-
-
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)

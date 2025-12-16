@@ -1,49 +1,40 @@
-
+import asyncio
 import logging
-import logging.config
-import threading
-import time
 
 from pyrogram.client import Client
-from pyromod import listen  # type: ignore
+from pyromod import listen
 
 from config import API_HASH, API_ID, BOT_TOKEN
+from webapp import start_webapp
 
 # Get logging configurations
 logging.getLogger().setLevel(logging.ERROR)
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
-def start_webapp():
-    """Start the FastAPI webapp in a separate thread"""
-    import asyncio
 
-    import uvicorn
+class Bot(Client):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-    from webapp import app
+    async def start(self, *args, **kwargs):
+        await super().start(*args, **kwargs)
+        asyncio.create_task(start_webapp())
 
-    # Create a new event loop for this thread
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    
-    # Run uvicorn server
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+    async def stop(self, *args, **kwargs):
+        await super().stop(*args, **kwargs)
+
+
 
 def main():
-    # Start webapp in background thread
-    webapp_thread = threading.Thread(target=start_webapp, daemon=True)
-    webapp_thread.start()
-    
-
-    time.sleep(3)
-
-
     plugins = dict(root="plugins")
-    app = Client("FileStore",
-                 bot_token=BOT_TOKEN,
-                 api_id=API_ID,
-                 api_hash=API_HASH,
-                 plugins=plugins,
-                 workers=100)
+    app = Bot(
+        "FileStore",
+        bot_token=BOT_TOKEN,
+        api_id=API_ID,
+        api_hash=API_HASH,
+        plugins=plugins,
+        workers=100,
+    )
 
     app.run()
 
