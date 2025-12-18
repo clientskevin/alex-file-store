@@ -8,6 +8,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
+COPY no_deps_requirements.txt .
+
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install --no-cache-dir -r no_deps_requirements.txt --no-deps
 
