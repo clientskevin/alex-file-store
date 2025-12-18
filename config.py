@@ -21,6 +21,8 @@ AUTH_USERS = (
     else []
 )
 
+WEB_URL = os.environ.get("WEB_URL", "")
+
 if OWNER_ID not in AUTH_USERS:
     AUTH_USERS.append(OWNER_ID)
 

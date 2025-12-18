@@ -4,6 +4,8 @@ import logging
 import httpx
 from flask import Flask, jsonify
 
+from config import WEB_URL
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -21,7 +23,7 @@ async def ping_self():
     # Wait a bit for the server to start
     await asyncio.sleep(5)
     
-    base_url = "http://127.0.0.1:8000"
+    base_url = WEB_URL or "http://127.0.0.1:8000"
     
     async with httpx.AsyncClient() as client:
         while True:
