@@ -35,6 +35,8 @@ async def ping_self():
 
 async def start_webapp():
     """Start Flask app in a separate thread and ping task in asyncio"""
+    if not WEB_URL:
+        return
     import threading
 
     # Start Flask in a daemon thread so it doesn't block asyncio
