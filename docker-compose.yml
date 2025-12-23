@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   alex_bot:
@@ -6,3 +5,4 @@ services:
     env_file:
       - .env
     restart: unless-stopped
+    container_name: alex_filestore_bot
